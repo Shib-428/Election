@@ -504,8 +504,10 @@ cython_debug/
 .pypirc
 
 __init__.py
-.devcontainer
-.github
-.vscode
+.devcontainer/
+.github/
+.vscode/
+migrations/
 .gitattributes
 alembic.ini
+election.splite
