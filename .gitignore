@@ -510,4 +510,7 @@ __init__.py
 migrations/
 .gitattributes
 alembic.ini
-election.splite
+election.sqlite
+CODE_OF_CONDUCT.md
+SECURITY.md
+LICENSE
