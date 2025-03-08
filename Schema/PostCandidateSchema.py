@@ -5,3 +5,4 @@ class PostCandidateSchema(BaseModel):
     name: str
     party: str
     win_count: int
+    
