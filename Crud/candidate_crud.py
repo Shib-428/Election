@@ -1,8 +1,10 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+
 from Model import CandidateModel
 from Schema import CandidateCreateSchema, CandidateUpdateSchema
 
-def db_create_candidate(db: Session, candidate: CandidateCreateSchema) -> CandidateModel:
+async def db_create_candidate(db: AsyncSession, candidate: CandidateCreateSchema) -> CandidateModel:
     db_candidate = CandidateModel(
         id=candidate.id,
         name=candidate.name,
@@ -10,30 +12,35 @@ def db_create_candidate(db: Session, candidate: CandidateCreateSchema) -> Candid
         win_count=candidate.win_count
     )
     db.add(db_candidate)
-    db.commit()
-    db.refresh(db_candidate)
+    await db.commit() # 非同期コミット
+    await db.refresh(db_candidate) # 非同期リフレッシュ
     return db_candidate
 
-def db_get_candidate(db: Session, candidate_id: int) -> CandidateModel | None:
-    return db.query(CandidateModel).filter(CandidateModel.id == candidate_id).first()
+async def db_get_candidate(db: AsyncSession, candidate_id: int) -> CandidateModel | None:
+    result = await db.execute(select(CandidateModel).filter(CandidateModel.id == candidate_id))
+    return result.scalars().first()
 
-def db_get_candidates(db: Session, skip: int = 0, limit: int = 10) -> list[CandidateModel]:
-    # query関数でモデルを指定し、.all()関数ですべてのレコードを取得
-    return db.query(CandidateModel).offset(skip).limit(limit).all()
+async def db_get_candidates(db: AsyncSession, skip: int = 0, limit: int = 10) -> list[CandidateModel]:
+    result = await db.execute(select(CandidateModel).offset(skip).limit(limit))
+    return result.scalars().all()
 
-def db_update_candidate(db: Session, candidate_id: int, candidate: CandidateUpdateSchema) -> CandidateModel | None:
-    db_candidate = db.query(CandidateModel).filter(CandidateModel.id == candidate_id).first()
+async def db_update_candidate(db: AsyncSession, candidate_id: int, candidate: CandidateUpdateSchema) -> CandidateModel | None:
+    # 非同期でクエリを実行
+    result = await db.execute(select(CandidateModel).filter(CandidateModel.id == candidate_id))
+    db_candidate = result.scalars().first()
     if db_candidate:
         db_candidate.name = candidate.name
         db_candidate.party = candidate.party
         db_candidate.win_count = candidate.win_count
-        db.commit()
-        db.refresh(db_candidate)
+        await db.commit()  # 非同期コミット
+        await db.refresh(db_candidate)  # 非同期リフレッシュ
     return db_candidate
 
-def db_delete_candidate(db: Session, candidate_id: int) -> CandidateModel | None:
-    db_candidate = db.query(CandidateModel).filter(CandidateModel.id == candidate_id).first()
+async def db_delete_candidate(db: AsyncSession, candidate_id: int) -> CandidateModel | None:
+    # 非同期でクエリを実行
+    result = await db.execute(select(CandidateModel).filter(CandidateModel.id == candidate_id))
+    db_candidate = result.scalars().first()
     if db_candidate:
-        db.delete(db_candidate)
-        db.commit()
+        await db.delete(db_candidate)  # 非同期削除
+        await db.commit()  # 非同期コミット
     return db_candidate

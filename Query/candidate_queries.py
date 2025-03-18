@@ -1,19 +1,14 @@
-from fastapi import HTTPException
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+
 from Model import CandidateModel, DistrictVoteModel
 from Schema import CandidateDetailsQuerySchema
-from sqlalchemy.orm import Session
 
-def get_candidate_details(db: Session, id: int) -> CandidateDetailsQuerySchema:
-    candidate = db.query(CandidateModel).filter(
-        CandidateModel.id==id
-    ).one()
-    if not candidate:
-        raise HTTPException(status_code=404, detail="Candidate not found")
+async def get_candidate_details(db: AsyncSession, id: int) -> CandidateDetailsQuerySchema | None:
+    candidate_result = await db.execute(select(CandidateModel).filter(CandidateModel.id == id))
+    candidate = candidate_result.scalars().first()
+
+    district_vote_result = await db.execute(select(DistrictVoteModel).filter(DistrictVoteModel.candidate_id == id))
+    district_vote = district_vote_result.scalars().first()
     
-    district_vote = db.query(DistrictVoteModel).filter(
-        DistrictVoteModel.candidate_id==id
-    ).one()
-    if not district_vote:
-        raise HTTPException(status_code=404, detail="District Vote not found")
-
-    return CandidateDetailsQuerySchema(candidate=candidate, district_vote=district_vote)
+    return CandidateDetailsQuerySchema(candidate=candidate, district_vote=district_vote) if any([candidate, district_vote]) else None
