@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
-class PostDistrictVoteSchema(BaseModel):
+class DistrictVoteUpdateSchema(BaseModel):
     candidate_id: int
     prefecture: str
-    district: str
+    district: int
     votes: int

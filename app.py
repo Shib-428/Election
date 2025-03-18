@@ -1,8 +1,7 @@
 from fastapi import FastAPI
 import uvicorn
 
-from Router import candidates_router, district_votes_router
-
+from api import candidates_router, district_votes_router 
 
 app = FastAPI()
 
