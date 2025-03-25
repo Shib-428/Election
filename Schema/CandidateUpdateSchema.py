@@ -1,7 +1,6 @@
 from pydantic import BaseModel
 
-class PostCandidateSchema(BaseModel):
-    id: int
+class CandidateUpdateSchema(BaseModel):
     name: str
     party: str
     win_count: int
