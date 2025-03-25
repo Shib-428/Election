@@ -1,10 +1,10 @@
 from pydantic import BaseModel
 
 class CandidateDetailsResponseSchema(BaseModel):
-    id: int
+    id: int | str
     name: str
     party: str
-    win_count: int
+    win_count: int | str
     prefecture: str # district_votes
-    district: int # district_votes
-    votes: int # district_votes
+    district: int | str # district_votes
+    votes: int | str # district_votes
