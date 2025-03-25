@@ -26,7 +26,7 @@ def read_district_votes(skip: int = 0, limit: int = 100, db: Session = Depends(g
 def read_district_vote(candidate_id: int, db: Session = Depends(get_db)) -> DistrictVoteSchema:
     db_district_vote = db_get_district_vote(db, candidate_id)
     if db_district_vote is None:
-        raise HTTPException(status_code=404, detail="Candidate not found")
+        raise HTTPException(status_code=404, detail="district_vote not found")
     return db_district_vote
 
 """ 編集 """
@@ -34,7 +34,7 @@ def read_district_vote(candidate_id: int, db: Session = Depends(get_db)) -> Dist
 def update_existing_district_vote(candidate_id: int, district_vote: DistrictVoteUpdateSchema, db: Session = Depends(get_db)):
     db_district_vote = db_update_district_vote(db, candidate_id, district_vote)
     if db_district_vote is None:
-        raise HTTPException(status_code=404, detail="Candidate not found")
+        raise HTTPException(status_code=404, detail="district_vote not found")
     return db_district_vote
 
 """ 削除 """
@@ -42,5 +42,5 @@ def update_existing_district_vote(candidate_id: int, district_vote: DistrictVote
 def delete_existing_district_vote(candidate_id: int, db: Session = Depends(get_db)) -> DistrictVoteSchema:
     db_district_vote = db_delete_district_vote(db, candidate_id)
     if db_district_vote is None:
-        raise HTTPException(status_code=404, detail="Candidate not found")
+        raise HTTPException(status_code=404, detail="district_vote not found")
     return db_district_vote

@@ -3,5 +3,5 @@ from .CandidateSchema import CandidateSchema
 from .DistrictVoteSchema import DistrictVoteSchema
 
 class CandidateDetailsQuerySchema(BaseModel):
-    candidate: CandidateSchema
-    district_vote: DistrictVoteSchema
+    candidate: CandidateSchema | None
+    district_vote: DistrictVoteSchema | None
